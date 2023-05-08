@@ -2,6 +2,7 @@ var { Given } = require("cucumber");
 var { When } = require("cucumber");
 var { Then } = require("cucumber");
 var { expect } = require("chai");
+const { faker } = require("@faker-js/faker");
 
 Given("I go to losestudiantes home screen", () => {
   browser.url("/uniandes/");
@@ -54,4 +55,47 @@ Then("I expect to see {string}", (error) => {
 
 Then("I expect to successfully login", () => {
   $("button.loginButton=Salir").waitForDisplayed(5000);
+});
+
+When("I open the signup form", () => {
+  $("a=Regístrate").waitForDisplayed(5000);
+  $("a=Regístrate").click();
+});
+
+Then("I expect to see the register form", () => {
+  const registerFormHeading = $("p.text-center.font-bold");
+  registerFormHeading.waitForDisplayed(5000);
+  const headingText = registerFormHeading.getText();
+  expect(headingText).to.equal("CREA UNA NUEVA CUENTA");
+});
+
+When("I fill in the signup form with valid data", () => {
+  const nameInput = $('input[name="firstname"]');
+  nameInput.setValue(faker.name.firstName());
+
+  const lastnameInput = $('input[name="lastname"]');
+  lastnameInput.setValue(faker.name.lastName());
+
+  const emailInput = $('input[name="email"]');
+  emailInput.setValue(faker.internet.email());
+
+  const password = faker.internet.password();
+
+  const passwordInput = $('input[name="password"]');
+  passwordInput.setValue(password);
+
+  const confirmPasswordInput = $('input[name="password2"]');
+  confirmPasswordInput.setValue(password);
+
+  const termsCheckbox = $('input[name="accept"]');
+  termsCheckbox.click();
+});
+
+When("I submit the signup form", () => {
+  $("button=Registrarse").click();
+});
+
+Then("I expect to see the successful signup modal", () => {
+  const successModal = $(".swal2-popup.swal2-modal.swal2-icon-success");
+  successModal.waitForDisplayed(5000);
 });
