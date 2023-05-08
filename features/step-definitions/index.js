@@ -95,6 +95,38 @@ When("I submit the signup form", () => {
   $("button=Registrarse").click();
 });
 
+Given("I clear university field", () => {
+  // Select the second fieldset within the form
+  const universityFieldset = $$(
+    "form.loginstyles__LoginForm-sc-e7acdk-3.cEYmnO > fieldset"
+  )[1];
+
+  // Open
+  universityFieldset.click();
+
+  // Press the Backspace key
+  browser.keys("\uE003");
+
+  // Close
+  universityFieldset.click();
+});
+
+Given("I check the no bachelor checkbox", () => {
+  const noBachelorCheckbox = $('input[name="no_bachelor"]');
+  noBachelorCheckbox.click();
+});
+
+Given("I close the successful signup modal", () => {
+  const closeModalButton = $(".swal2-confirm.swal2-styled");
+  closeModalButton.waitForDisplayed(5000);
+  closeModalButton.click();
+});
+
+Given("I log out", () => {
+  $("button.loginButton=Salir").waitForDisplayed(5000);
+  $("button.loginButton=Salir").click();
+});
+
 Then("I expect to see the successful signup modal", () => {
   const successModal = $(".swal2-popup.swal2-modal.swal2-icon-success");
   successModal.waitForDisplayed(5000);
