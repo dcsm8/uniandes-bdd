@@ -12,6 +12,12 @@ Given("I go to losestudiantes home screen", () => {
 });
 
 When("I open the login screen", () => {
+  const popupCloseButton = $(".instagramstyles__CloseButton-sc-1ystbkl-1");
+  if (popupCloseButton.isDisplayed()) {
+    popupCloseButton.click();
+  }
+
+  // Quieres seguirnos en Instagram?
   $("button.loginButton").waitForExist(5000);
   $("button.loginButton").waitForDisplayed(5000);
   $("button.loginButton").click();
@@ -47,6 +53,12 @@ When(/^I fill with (.*) and (.*)$/, (email, password) => {
   passwordInput.keys(password);
 });
 
+Then(/^I expect to see the error (.*)$/, (error) => {
+  $(".notice.alert.alert-danger").waitForDisplayed(5000);
+  var alertText = browser.$(".notice.alert.alert-danger").getText();
+  expect(alertText).to.include(error);
+});
+
 Then("I expect to see {string}", (error) => {
   $(".notice.alert.alert-danger").waitForDisplayed(5000);
   var alertText = browser.$(".notice.alert.alert-danger").getText();
@@ -70,6 +82,8 @@ Then("I expect to see the register form", () => {
 });
 
 When("I fill in the signup form with valid data", () => {
+  $('input[name="firstname"]').waitForDisplayed(5000);
+
   const nameInput = $('input[name="firstname"]');
   nameInput.setValue(faker.name.firstName());
 
@@ -90,6 +104,49 @@ When("I fill in the signup form with valid data", () => {
   const termsCheckbox = $('input[name="accept"]');
   termsCheckbox.click();
 });
+
+When(
+  "I fill in the signup form without accepting the terms and conditions",
+  () => {
+    const nameInput = $('input[name="firstname"]');
+    nameInput.setValue(faker.name.firstName());
+
+    const lastnameInput = $('input[name="lastname"]');
+    lastnameInput.setValue(faker.name.lastName());
+
+    const emailInput = $('input[name="email"]');
+    emailInput.setValue(faker.internet.email());
+
+    const password = faker.internet.password();
+
+    const passwordInput = $('input[name="password"]');
+    passwordInput.setValue(password);
+
+    const confirmPasswordInput = $('input[name="password2"]');
+    confirmPasswordInput.setValue(password);
+  }
+);
+
+When(
+  /^I fill the signup form with (.*), (.*), (.*), (.*), and (.*)$/,
+  (firstname, lastname, email, password, password2) => {
+    $('input[name="firstname"]').setValue(firstname);
+    $('input[name="lastname"]').setValue(lastname);
+    $('input[name="email"]').setValue(email);
+    $('input[name="password"]').setValue(password);
+    $('input[name="password2"]').setValue(password2);
+  }
+);
+
+Then(
+  "I should see an error message indicating the terms and conditions must be accepted",
+  () => {
+    const errorMessage = $(
+      "fieldset.form-group.mb-0 div.notice.alert.alert-danger"
+    );
+    expect(errorMessage).toBeDisplayed();
+  }
+);
 
 When("I submit the signup form", () => {
   $("button=Registrarse").click();
